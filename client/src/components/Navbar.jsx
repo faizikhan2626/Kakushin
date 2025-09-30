@@ -46,12 +46,6 @@ const Navbar = ({ search, setSearch }) => {
             >
               Login
             </Link>
-            <Link
-              to="/signup"
-              className="text-white px-4 py-2 rounded hover:text-indigo-300 font-semibold"
-            >
-              Signup
-            </Link>
           </>
         )}
       </div>
