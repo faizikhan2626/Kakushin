@@ -46,15 +46,19 @@ const NoteEditor = ({ selectedNote, onSave }) => {
       if (isUpdate) {
         // Update note with toast
         res = await axios.put(
-          `http://localhost:5000/api/notes/${selectedNote._id}`,
+          `${import.meta.env.VITE_BACKEND_URL}/notes/${selectedNote._id}`,
           noteData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         // Create note
-        res = await axios.post("http://localhost:5000/api/notes", noteData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/notes`,
+          noteData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         // Show create toast
         toast.success("Note created successfully!", {

@@ -8,7 +8,7 @@ const app = express();
 // ✅ Allow requests from your frontend
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // frontend URL
     credentials: true,
   })
 );
@@ -28,4 +28,6 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(5000, () =>
+  console.log("Server running on ${process.env.PORT || 5000}")
+);
