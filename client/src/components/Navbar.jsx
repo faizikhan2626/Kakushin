@@ -12,6 +12,7 @@ const Navbar = ({ search, setSearch }) => {
       <Link
         to="/"
         className="text-xl font-bold text-gray-400 hover:text-indigo-300"
+        onClick={() => setSearch("")}
       >
         NotesApp
       </Link>

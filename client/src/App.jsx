@@ -96,7 +96,7 @@ export default function App() {
               path="/notes"
               element={
                 <PrivateRoute>
-                  <Notes search={search} />
+                  <Notes search={search} setSearch={setSearch} />
                 </PrivateRoute>
               }
             />

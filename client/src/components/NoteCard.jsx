@@ -73,8 +73,8 @@ const NoteCard = ({ note, onDelete, onTagClick }) => {
                 key={i}
                 className="px-3 py-1 text-xs font-medium bg-gray-300 text-gray-800 rounded-full cursor-pointer hover:bg-gray-400"
                 onClick={(e) => {
-                  e.stopPropagation(); // prevent opening editor
-                  onTagClick?.(tag); // call parent callback
+                  e.stopPropagation(); // prevent card click
+                  onTagClick(tag); // set search
                 }}
               >
                 #{tag}

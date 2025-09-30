@@ -4,26 +4,29 @@ const auth = require("../middleware/auth");
 const Note = require("../models/Note");
 const authMiddleware = require("../middleware/auth.js");
 
-// GET /api/notes/ -> list user's notes (with optional ?q=search)
+// GET /api/notes/ with search and tag filtering
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const { q, tags } = req.query;
-    const query = { user: req.user.id };
+    const baseQuery = { user: req.user.id };
+    const orQuery = [];
 
     if (q) {
-      query.$or = [
+      orQuery.push(
         { title: { $regex: q, $options: "i" } },
-        { content: { $regex: q, $options: "i" } },
-      ];
+        { content: { $regex: q, $options: "i" } }
+      );
     }
 
     if (tags) {
-      // tags is comma separated
       const tagArr = tags.split(",").map((t) => t.trim());
-      query.tags = { $in: tagArr };
+      orQuery.push({ tags: { $in: tagArr } });
     }
 
-    const notes = await Note.find(query).sort({ updatedAt: -1 });
+    const finalQuery =
+      orQuery.length > 0 ? { ...baseQuery, $or: orQuery } : baseQuery;
+
+    const notes = await Note.find(finalQuery).sort({ updatedAt: -1 });
     res.json(notes);
   } catch (err) {
     console.error(err.message);

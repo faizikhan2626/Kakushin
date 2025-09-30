@@ -1,39 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import API from "../api/axios";
-import "../styles.css";
 import NoteCard from "../components/NoteCard";
 
-const Notes = () => {
+const Notes = ({ search, setSearch }) => {
   const [notes, setNotes] = useState([]);
-  const [search, setSearch] = useState("");
 
-  const fetchNotes = async () => {
+  const fetchNotes = async (searchQuery = "") => {
     try {
-      const res = await API.get("/notes");
-      let filtered = res.data;
+      const params = {};
 
-      if (search.trim()) {
-        const regex = new RegExp(search.trim(), "i");
-        filtered = res.data.filter(
-          (note) =>
-            regex.test(note.title) || note.tags.some((tag) => regex.test(tag))
-        );
+      if (searchQuery.startsWith("#")) {
+        params.tags = searchQuery.slice(1);
+      } else if (searchQuery.trim()) {
+        params.q = searchQuery.trim();
       }
 
-      setNotes(filtered);
+      const res = await API.get("/notes", { params });
+      setNotes(res.data);
     } catch (err) {
       console.error(err);
     }
   };
 
   useEffect(() => {
-    fetchNotes();
+    fetchNotes(search);
   }, [search]);
 
-  // New: handler for tag clicks
   const handleTagClick = (tag) => {
-    setSearch(tag); // sets search input to clicked tag
+    setSearch(`#${tag}`);
   };
 
   return (
@@ -42,7 +37,7 @@ const Notes = () => {
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Notes</h2>
         <Link to="/notes/new">
-          <button className="px-5 py-2 bg-black !border-none text-white rounded-full shadow hover:bg-gray-800 transition">
+          <button className="px-5 py-2 bg-black text-white rounded-full shadow hover:bg-gray-800 transition">
             + New Note
           </button>
         </Link>
@@ -57,12 +52,11 @@ const Notes = () => {
             onDelete={(deletedId) =>
               setNotes(notes.filter((n) => n._id !== deletedId))
             }
-            onTagClick={handleTagClick} // <-- pass the callback
+            onTagClick={handleTagClick} // handle tag clicks
           />
         ))}
       </div>
 
-      {/* Empty State */}
       {notes.length === 0 && (
         <p className="text-gray-500 text-center mt-10">No notes found.</p>
       )}
