@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import API from "./api/axios";
+import { useLocation } from "react-router-dom";
 import { getUserFromToken, removeToken } from "./utils/auth";
 import NoteEditorWithFetch from "./components/NoteEditorWithFetch.jsx";
 
@@ -78,13 +79,18 @@ function PrivateRoute({ children }) {
 /** ---------------- APP ---------------- */
 export default function App() {
   const [search, setSearch] = useState(""); // lift search state here
+  const location = useLocation();
+
+  // paths where navbar should not appear
+  const hideNavbarRoutes = ["/login", "/signup"];
+  const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
     <AuthProvider>
       <div
         style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
       >
-        <Navbar search={search} setSearch={setSearch} />
+        {!shouldHideNavbar && <Navbar search={search} setSearch={setSearch} />}
         <main style={{ flex: 1 }} className="container mx-auto px-6 py-10">
           <Routes>
             {/* Public */}
